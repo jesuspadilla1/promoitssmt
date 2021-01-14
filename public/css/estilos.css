@@ -1,0 +1,30 @@
+ul li a{
+	margin-right: 50px;
+}
+
+.index, .mdnav {
+     background-color: #FF8C00 !important;
+     color:#212121 !important;
+}
+
+.largos{
+	width: 280px; 
+	height: 15px;
+}
+
+.personales {
+	max-width: 90%; 
+	margin: 0 auto; 
+	float: none; 
+	margin-bottom: 3%; 
+	margin-top: 3%;"
+}
+
+
+.icon{
+	font-size: 20px;
+}
+
+#horLunes, #horMartes, #horMiercoles, #horJueves, #horViernes, #horSabado, #horDomingo{
+	display: block;
+}

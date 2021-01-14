@@ -1,0 +1,807 @@
+CREATE DATABASE promo_itssmt;
+USE promo_itssmt
+
+CREATE TABLE usuarios(idusuario INT PRIMARY KEY AUTO_INCREMENT, 
+n_usuario VARCHAR(15),
+c_usuario VARCHAR(15),
+estado VARCHAR(15))
+ENGINE=INNODB;
+
+INSERT INTO usuarios(n_usuario, c_usuario, estado) values('admin', 'adminitssmt', 'activo');
+
+CREATE TABLE datos_personales(idpersonal INT PRIMARY KEY AUTO_INCREMENT,
+idusuario INT,
+nombres VARCHAR(20),
+a_paterno VARCHAR(20),
+a_materno VARCHAR(20),
+rfc_usuario VARCHAR(13),
+n_telefono VARCHAR(15),
+correo_usu VARCHAR(30),
+FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
+ON DELETE CASCADE ON UPDATE CASCADE)
+ENGINE=INNODB;
+
+CREATE TABLE t_pago(idpago INT PRIMARY KEY AUTO_INCREMENT,
+tipo_pago VARCHAR(45))
+ENGINE=INNODB;
+
+CREATE TABLE giro(idgiro INT PRIMARY KEY AUTO_INCREMENT,
+n_giro VARCHAR(200),
+d_giro VARCHAR(250),
+c_giro VARCHAR(9))
+ENGINE=INNODB;
+
+CREATE TABLE info_negocio(idinfo_negocio INT PRIMARY KEY AUTO_INCREMENT,
+idpersonal INT,
+idgiro INT,
+n_negocio VARCHAR(45),
+ref_negocio VARCHAR(45),
+rfc_negocio VARCHAR(13),
+url_imagen1 VARCHAR(100),
+url_imagen2 VARCHAR(100),
+tipo_negocio VARCHAR(15),
+tipo_servicio VARCHAR(25),
+FOREIGN KEY(idpersonal) REFERENCES datos_personales(idpersonal)
+ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY(idgiro) REFERENCES giro(idgiro) 
+ON DELETE CASCADE ON UPDATE CASCADE)
+ENGINE=INNODB;
+
+CREATE TABLE redes_sociales(idredes_sociales INT PRIMARY KEY AUTO_INCREMENT,
+idinfo_negocio INT,
+correo_n VARCHAR(45),
+num_local VARCHAR(10),
+num_whats VARCHAR(10),
+dir_face VARCHAR(100),
+dir_twiter VARCHAR(100),
+dir_insta VARCHAR(100),
+otro VARCHAR(100),
+FOREIGN KEY(idinfo_negocio) REFERENCES info_negocio(idinfo_negocio) 
+ON DELETE CASCADE ON UPDATE CASCADE)
+ENGINE=INNODB;
+
+CREATE TABLE productos(idproductos INT PRIMARY KEY AUTO_INCREMENT,
+idinfo_negocio INT,
+n_producto VARCHAR(45),
+m_producto VARCHAR(45),
+FOREIGN KEY(idinfo_negocio) REFERENCES info_negocio(idinfo_negocio) 
+ON DELETE CASCADE ON UPDATE CASCADE)
+ENGINE=INNODB;
+
+CREATE TABLE servicios(idservicio INT PRIMARY KEY AUTO_INCREMENT,
+idinfo_negocio INT,
+n_servicio VARCHAR(45),
+d_servicio VARCHAR(100),
+FOREIGN KEY(idinfo_negocio) REFERENCES info_negocio(idinfo_negocio) 
+ON DELETE CASCADE ON UPDATE CASCADE)
+ENGINE=INNODB;
+
+CREATE TABLE negocio_pago(idnegocio_pago INT PRIMARY KEY AUTO_INCREMENT,
+idpago INT,
+idinfo_negocio INT,
+FOREIGN KEY(idpago) REFERENCES t_pago(idpago) 
+ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY(idinfo_negocio) REFERENCES info_negocio(idinfo_negocio) 
+ON DELETE CASCADE ON UPDATE CASCADE)
+ENGINE=INNODB;
+
+CREATE TABLE direccion(iddireccion INT PRIMARY KEY AUTO_INCREMENT,
+idinfo_negocio INT,
+calle VARCHAR(45),
+numero VARCHAR(10),
+codigo_p VARCHAR(5),
+colonia VARCHAR(45),
+estado VARCHAR(25),
+municipio VARCHAR(45),
+FOREIGN KEY(idinfo_negocio) REFERENCES info_negocio(idinfo_negocio) 
+ON DELETE CASCADE ON UPDATE CASCADE)
+ENGINE=INNODB;
+
+CREATE TABLE dias_horario(iddias_horario INT PRIMARY KEY AUTO_INCREMENT,
+idinfo_negocio INT,
+he_lun VARCHAR(15),
+hc_lun VARCHAR(15),
+hs_lun VARCHAR(15),
+he_mar VARCHAR(15),
+hc_mar VARCHAR(15),
+hs_mar VARCHAR(15),
+he_mie VARCHAR(15),
+hc_mie VARCHAR(15),
+hs_mie VARCHAR(15),
+he_jue VARCHAR(15),
+hc_jue VARCHAR(15),
+hs_jue VARCHAR(15),
+he_vie VARCHAR(15),
+hc_vie VARCHAR(15),
+hs_vie VARCHAR(15),
+he_sab VARCHAR(15),
+hc_sab VARCHAR(15),
+hs_sab VARCHAR(15),
+he_dom VARCHAR(15),
+hc_dom VARCHAR(15),
+hs_dom VARCHAR(15),
+FOREIGN KEY(idinfo_negocio) REFERENCES info_negocio(idinfo_negocio) 
+ON DELETE CASCADE ON UPDATE CASCADE)
+ENGINE=INNODB;
+
+# PAGOS
+
+INSERT INTO t_pago(tipo_pago) VALUES('Efectivo');
+INSERT INTO t_pago(tipo_pago) VALUES('Tarjeta de crédito');
+INSERT INTO t_pago(tipo_pago) VALUES('Tarjeta de Débito');
+
+
+#Giros
+
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Abarrotes en general sin venta de bebidad alcohólicas', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y miscelaneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Acabado de productos textiles', 'Preparación e hilado de fibras duras naturales', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Acabados y decoraciones', 'Comercio al por menor de otros artículos para la decoración de interiores', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Accesorios para computadoras', 'Comercio al por menor de mobiliario, equipo y accesorios de computo', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Aceites y lubricantes', 'Comercio al por menor de aceites y grasas lubricantes, aditivos y similares para vehículos de motor', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Aceros comerciales y sus anexos', 'Comercio al por mayor de materiales metálicos para la construcción y la manufactura', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Adornos para cabello', 'Comercio al por menor de bisutería y accesorios de vestir', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Agencia de viajes', 'Agencia de viajes', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Agencias de publicidad', 'Servicios de administración de negocios ', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Alineación y balanceo de automóviles y camiones', 'Alineación y balanceo de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Almacén de productos y transformación de acero', 'Otros servicios de almacenamiento con instalaciones especializadas ', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Alquiler de equipo de cómputo', 'Alquiler de equipo de cómputo y de otras máquinas y mobiliario de oficina', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Alquiler de equipo de cómputo y de otras máquinas y mobiliario de oficina', 'Alquiler de equipo de cómputo y de otras máquinas y mobiliario de oficina', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Alquiler de instrumentos musicales', 'Alquiler de instrumentos musicales', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Alquiler de mesas, sillas, vajillas y similares', 'Alquiler de mesas, sillas, vajillas y similares', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Alquiler de otros artículos para el hogar y personales', 'Alquiler de otros artículos para el hogar y personales', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Alquiler de prendas de vestir', 'Alquiler de prendas de vestir', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Alquiler de videocasetes y discos', 'Alquiler de otros artículos para el hogar y personales', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Alquiler sin intermediación de otros bienes raíces', 'Otros servicios relacionados con los servicios inmobiliarios', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Alquiler sin intermediación de salones para fiestas y convenciones', 'Alquiler sin intermediación de salones para fiestas y convenciones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Alquiler y banquetes', 'Alquiler sin intermediación de salones para fiestas y convenciones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Antojitos mexicanos sin venta de bebidas alcolicas', 'Restaurantes con servicios de preparación de antojitos', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Artículos deportivos escolares juguetería y regalos', 'Comercio al por menor en tiendas departamentales', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Artículos de belleza', 'Comercio al por menor de artículos de perfumería y cosméticos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Artículos de piel y novedades', 'Fabricación de otros productos de cuero, piel y materiales sucedáneos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Artículos deportivos', 'Comercio al por menor en tiendas departamentales', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Artículos deportivos y zapatería', 'Comercio al por menor en tiendas departamentales', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Artículos deportivos, higiénicos y pañales', 'Comercio al por menor en tiendas departamentales', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Artículos para decorar interiores', 'Comercio al por menor de otros artículos para la decoración de interiores', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Artículos para manualidades', 'Fabricación de otros productos de cartón y papel', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Artículos religiosos, libros y biblias', 'Comercio al por mayor de libros', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Autolavado', 'Lavado y lubricado de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Barbería y peluquería', 'Salones y clínicas de belleza y peluquerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Bazar en general', 'Comercio al por menor de artículos usados', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Bicicletas, refacciones y accesorios', 'Comercio al por menor de bicicletas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Bisutería y artículos de temporada', 'Comercio al por menor de bisutería y accesorios de vestir', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Bonetería', 'Comercio al por menor de artículos de mercería y bonetería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Boutique', 'Comercio al por mayor de ropa, bisutería y accesorios de vestir', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cafetería sin venta de bebidas alcohólicas', 'Cafeterías, fuentes de sodas, neverías, refresquerías y similares', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cafetería y pizzería sin venta de bebidas alcohólicas', 'Restaurantes con servicio de preparación de pizzas, hamburguesas, hot dogs y pollos rostizados para llevar', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Carnicería', 'Comercio al por menor de carnes rojas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Carnicería y abarrotes sin venta de bebidas alcohólicas ', 'Comercio al por menor de carnes rojas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Carpintería', 'Fabricación de artículos y utensilios de madera para el hogar', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Centro botánico naturista, cerería y artículos para la suerte', 'Comercio al por menor de productos naturistas, medicamentos homeopáticos y de complementos alimenticios', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Centro de acondicionamiento físico del sector privado', 'Centros de acondicionamiento físico del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Centro de atención a clientes, venta de telefonía celular y accesorios en general', 'Comercio al por menor de teléfonos y otros aparatos de comunicación', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Centro de copiado', 'Servicios de fotocopiado, fax y afines', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Chamarras, artículos de piel y ropa casual', 'Comercio al por menor de ropa de cuero y piel y de otros artículos de estos materiales', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cirujano dentista *', 'Consultorios dentales del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Clases de belleza, corte y confección', 'Escuelas del sector privado dedicadas a la enseñanza de oficios', 'Servicos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Clínica de rehabilitación física', 'Consultorios del sector privado de audiología y de terapia ocupacional, física y del lenguaje', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Clínica médico quirúrgica y farmacia*', 'Clínicas de consultorios médicos del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cocina económica sin venta de bebidas alcohólicas', 'Restaurantes con servicio de preparación de alimentos a la carta o de comida corrida', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercialización de refacciones industriales', 'Comercio al por mayor de maquinaria y equipo para la industria manufacturera', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercializadora de lácteos y embutidos', 'Comercio al por menor de leche, otros productos lácteos y embutidos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de artículos de mochilas de temporada', 'Fabricación de bolsos de mano, maletas y similares', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de artículos de papelería', 'Comercio al por menor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de artículos deportivos', 'Comercio al por menor de artículos y aparatos deportivos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de bicicletas,refacciones y accesorios', 'Comercio al por menor de bicicletas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de calzado y artículos', 'Comercio al por menor de calzado', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de carnes rojas', 'Comercio al por menor de carnes rojas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de cigarros, puros y tabaco', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de colchas y blancos ', 'Comercio al por menor de blancos ', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de computadoras y accesorios', 'Comercio al por menor de mobiliario, equipo y accesorios de cómputo', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de cristalería', 'Comercio al por menor de cristalería, loza y utensilios de cocina', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de dulces típicos ', 'Comercio al por menor de dulces y materias primas para repostería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de dulces y materias primas para repostería', 'Comercio al por menor de dulces y materias primas para repostería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de dulces, chocolates y confituras', 'Comercio al por menor de dulces y materias primas para repostería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de dulces, chocolates y confitados', 'Comercio al por menor de dulces y materias primas para repostería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de ferretería y tlapalería', 'Comercio al por menor en ferreterías y tlapalerías', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de ferretería, tlapalería, material eléctrico y tornillería', 'Comercio al por menor en ferreterías y tlapalerías', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de foamy', 'Comercio al por menor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de frutas, verduras y legumbres frescas', 'Comercio al por menor de frutas y verduras frescas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de frutas, verduras frescas y pollería', 'Comercio al por menor de frutas y verduras frescas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de joyería, relojes y similares', 'Comercio al por menor de artículos de joyería y relojes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de juguetes', 'Comercio al por menor de juguetes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de juguetes, bicicletas, triciclos, partes para bicicletas y triciclos', 'Comercio al por menor de juguetes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de lámparas ornamentales y cándiles', 'Comercio al por menor de muebles para el hogar', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de libros', 'Comercio al por menor de libros', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de llantas y cámaras para automóviles, camionetas y camiones', 'Comercio al por menor de llantas y cámaras para automóviles, camionetas y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de material eléctrico, ferretería y papelería', 'Comercio al por menor en ferreterías y tlapalerías', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de materiales para construcción excepto madera', 'Comercio al por menor de materiales para la construcción en tiendas de autoservicio especializadas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de materias primas', 'Comercio al por menor de dulces y materias primas para repostería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de medicamentos veterinarios y alimentos para animales', 'Servicios veterinarios para mascotas prestados por el sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de mochilas, bolsas y regalos', 'Fabricación de bolsos de mano, maletas y similares', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de motocicletas, bicimotos, motonetas y motocicletas acuáticas y refacciones', 'Comercio al por menor de motocicletas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de muebles', 'Comercio al por menor de muebles para el hogar', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de muebles en abonos', 'Comercio al por menor de muebles para el hogar', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de otros alimentos preparados para su consumo (rosticería)', 'Restaurantes que preparan otro tipo de alimentos para llevar', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de otros alimentos preparados para su consumo sin venta de bebidas alcohólicas', 'Elaboración de alimentos frescos para consumo inmediato', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de otros insumos textiles', 'Acabado de productos textiles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de otros insumos y materiales para la construcción', 'Comercio al por menor de materiales para la construcción en tiendas de autoservicio especializadas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de partes y refacciones nuevas para automóviles camionetas y camiones', 'Comercio al por menor de partes y refacciones nuevas para automóviles, camionetas y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de periódicos, revistas y posters', 'Comercio al por menor de revistas y periódicos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de pinturas, lacas, barnices y similares', 'Comercio al por menor de pintura', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de prendas de vestir', 'Comercio al por menor de ropa, excepto de bebé y lencería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de productos farmacéuticos', 'Comercio al por mayor de productos farmacéuticos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de productos naturistas y complementos alimenticios', 'Comercio al por menor de productos naturistas, medicamentos homeopáticos y de complementos alimenticios', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de regalos y novedades', 'Comercio al por menor de regalos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de relojes, joyería fina y artículos decorativos de materiales preciosos', 'Comercio al por menor de artículos de joyería y relojes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de ropa para dama y niños', 'Comercio al por menor de ropa, bisutería y accesorios de vestir', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de ropa y accesorios para fiestas', 'Comercio al por menor de ropa, bisutería y accesorios de vestir', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de semillas y granos alimenticios, especies y chiles secos', 'Comercio al por mayor de semillas y granos alimenticios, especias y chiles secos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de suplementos alimenticios', 'Comercio al por menor de productos naturistas, medicamentos homeopáticos y de complementos alimenticios', 'Productos');
+
+
+
+
+
+
+
+
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de tacos sin venta de bebidas alcohólicas', 'Elaboración de otros alimentos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de telas', 'Comercio al por menor de telas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de uniformes y artículos deportivos', 'Confección en serie de uniformes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de uniformes y regalos', 'Confección en serie de uniformes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de vidrios, espejos, aluminio, domos de acrílico y policarbonato, y tragaluces de vidrio', 'Comercio al por menor de vidrios y espejos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor en tienda naturista', 'Comercio al por menor de productos naturistas, medicamentos homeopáticos y de complementos alimenticios', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor en tiendas de abarrotes, misceláneas y ultramarinos sin venta de bebidas alcohólicas', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor y por mayor de carnes rojas y similares', ' Comercio al por menor de carnes rojas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de calzado, agujetas, tintas plantillas accesorios de calzado (zapatería)', '', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de muebles para el hogar', 'Comercio al por menor de muebles para el hogar', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de accesorios automotrices', 'Comercio al por menor de partes y refacciones nuevas para automóviles, camionetas y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de alimentos balanceados para animales, granos y forrajes', 'Elaboración de alimentos para animales', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de alimentos y forrajes ', 'Elaboración de alimentos para animales', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de artículos de piel y novedades', 'Comercio al por menor de ropa de cuero y piel y de otros artículos de estos materiales', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de artículos deportivos', 'Comercio al por menor de artículos y aparatos deportivos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de artículos para regalos', 'Comercio al por menor de regalos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de bicicletas y refacciones', ' Comercio al por menor de bicicletas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de celulares y accesorios', 'Comercio al por menor de teléfonos y otros aparatos de comunicación', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de máquinas de coser y artículos para el hogar', ' Comercio al por mayor de otros productos textiles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de motocicletas y refacciones', 'Comercio al por menor de motocicletas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de pinturas y solventes ', 'Comercio al por menor de pintura', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de pollo procesado', 'Explotación de pollos para la producción de carne', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de materiales para construcción', 'Comercio al por menor de materiales para la construcción en tiendas de autoservicio especializadas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de todo tipo de hules automotrices', ' Fabricación de hules sintéticos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de artículos deportivos', 'Comercio al por menor de artículos y aparatos deportivos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de autos, refacciones y servicio de importación y exportación', 'Comercio al por menor de automóviles y camionetas nuevos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de calzado', 'Comercio al por menor de calzado', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de calzado y guitarras', 'Comercio al por menor de calzado', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de calzado y bisutería', 'Comercio al por menor de calzado', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de cristalería, electrodomésticos, relojería y regalos', 'Comercio al por menor de cristalería, loza y utensilios de cocina', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de equipos de cómputo y accesorios', 'Comercio al por menor de mobiliario, equipo y accesorios de cómputo', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de estambres y regalos en general', 'Comercio al por menor de regalos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de lentes y accesorios', 'Comercio al por menor de lentes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de maquinaria agrícola', 'Comercio al por mayor de maquinaria y equipo para otros servicios y para actividades comerciales', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de material eléctrico', 'Comercio al por mayor de equipo y material eléctrico', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de materiales de desecho', 'Comercio al por mayor de otros materiales de desecho', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de materias primas para la elaboración de pan', 'Comercio al por menor de dulces y materias primas para repostería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de monedas y pedacería de oro', 'Orfebrería y joyería de metales y piedras precioso', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de monedas y pedacería de oro y plata', 'Orfebrería y joyería de metales y piedras preciosos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de papelería', 'Comercio al por mayor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de pedacería de oro, monedas y plata', 'Orfebrería y joyería de metales y piedras preciosos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de pinturas', 'Comercio al por menor de pintura', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de pisos, azulejos, muebles para baño y accesorios', 'Comercio al por menor de pisos y recubrimientos cerámicos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de refacciones y accesorios automotrices', 'Comercio al por menor de partes y refacciones nuevas para automóviles, camionetas y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de refacciones y servicios agrícolas', 'Beneficio de productos agrícolas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de regalos, joyería, moda muebles, accesorios y artículos decorativos', 'Comercio al por menor de regalos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de ropa de bautizo, primera comunión, XV años y bodas', 'Comercio al por mayor de ropa, bisutería y accesorios de vestir', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de ropa y accesorios', 'Comercio al por mayor de ropa, bisutería y accesorios de vestir', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de telas, blancos y regalos', 'Comercio al por mayor de fibras, hilos y telas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de toda clase de artículos confeccionados para caballero', 'Comercio al por mayor de ropa, bisutería y accesorios de vestir', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de vidrios, aluminios y herrajes', 'Comercio al por mayor de vidrios y espejos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta y consignación de autos usados', 'Comercio al por menor de automóviles y camionetas usados', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta y distribución de ropa infantil y accesorios', 'Comercio al por menor de ropa, bisutería y accesorios de vestir', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta y reparación de carburadores', 'Reparación mecánica en general de automóviles y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta y reparación de instrumentos de equipo de audio', 'Reparación y mantenimiento de otro equipo electrónico y de equipo de precisión', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta, importación, fabricación y maquila de ropa en general', 'Confección de prendas de vestir', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta, reparación y alquiler de instrumentos', 'Alquiler de instrumentos musicales', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de perfumes a granel', 'Comercio al por menor de artículos de perfumería y cosméticos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de refacciones y reparación de motocicletas', 'Reparación y mantenimiento de motocicletas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Computadoras y billar sin venta de bebidas alcohólicas', 'Alquiler de equipo de cómputo y de otras máquinas y mobiliario de oficina', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Confección de cortinas, blancos y similares', 'Confección de cortinas, blancos y similares', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Confección de costales', 'Confección de costales', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Confección de prendas de vestir sobre medida', 'Confección de prendas de vestir', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Confección de productos textiles recubiertos y de materiales sucedáneos', 'Confección de productos textiles recubiertos y de materiales sucedáneos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Confección de sombreros y gorras', 'Confección de sombreros y gorras', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Confección de uniformes escolares, industriales y bordados', 'Confección en serie de uniformes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Confección en serie de camisas', 'Confección en serie de camisas ', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Confección en serie de disfraces y trajes típicos', 'Confección en serie de disfraces y trajes típicos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Confección en serie de otra ropa exterior de materiales textiles', 'Confección de prendas de vestir', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Confección en serie de ropa interior y de dormir', 'Confección en serie de ropa interior y de dormir', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Confección en serie de uniformes', 'Confección en serie de uniformes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Confección, bordado y deshilado de productos textiles', 'Confección de productos textiles recubiertos y de materiales sucedáneos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Consultorio de medicina especializada del sector privado*', 'Clínicas de consultorios médicos del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Consultorio de nutrición y acupuntura*', 'Clínicas de consultorios médicos del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Consultorio de ortopedia y traumatología*', 'Clínicas de consultorios médicos del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Consultorio de podología*', 'Clínicas de consultorios médicos del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Consultorio de rehabilitación*', 'Clínicas de consultorios médicos del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Consultorio dental*', 'Consultorios dentales del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Consultorio médico*', 'Clínicas de consultorios médicos del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cortinas, persianas y decoraciones en general', 'Comercio al por menor de otros artículos para la decoración de interiores', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cremería y salchichonería sin venta de bebidas alcohólicas', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cremería, salchichonería y abarrotes en general sin venta de bebidas alcohólicas', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cristalería, loza, peltre, plástico y aluminio ', 'Comercio al por menor de cristalería, loza y utensilios de cocina', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cristalería, plásticos y regalos', 'Comercio al por menor de cristalería, loza y utensilios de cocina', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cultivo de maíz grano ', 'Comercio al por menor de semillas y granos alimenticios, especias y chiles secos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Decoración de interiores', 'Diseño y decoración de interiores', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Depósito de compra-venta de refrescos', 'Comercio al por menor de bebidas no alcohólicas y hielo', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Diseño en decoración y regalos', 'Comercio al por menor de otros artículos para la decoración de interiores', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración de alimentos frescos para consumo inmediato', 'Elaboración de alimentos frescos para consumo inmediato', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración de botanas', 'Elaboración de alimentos frescos para consumo inmediato', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración de café instantáneo', 'Cafeterías, fuentes de sodas, neverías, refresquerías y similares', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración de chocolate y productos de chocolate', 'Comercio al por menor de dulces y materias primas para repostería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración de gelatinas y otros postres en polvo', 'Elaboración de gelatinas y otros postres en polvo', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración de helados y paletas', 'Elaboración de helados y paletas ', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración de hielo', 'Comercio al por menor de bebidas no alcohólicas y hielo', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración de otros alimentos', 'Elaboración de alimentos frescos para consumo inmediato', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración de queso productos lácteos y derivados', 'Comercio al por menor de leche, otros productos lácteos y embutidos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración de refrescos y agua embotellada', 'Elaboración de refrescos, hielo y otras bebidas no alcohólicas, y purificación y embotellado de agua', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración de tortilla de maíz y molienda de nixtamal', 'Elaboración de tortillas de maíz y molienda de nixtamal', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración de tortillas de harina', 'Elaboración de tortillas de harina de trigo de forma tradicional', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Eléctrica y ferretería', 'Comercio al por menor en ferreterías y tlapalerías', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Embobinado de motores y venta de refacciones para electrodomésticos', 'Comercio al por menor de electrodomésticos menores y aparatos de línea blanca', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Embotelladora de agua y fábrica de hielos', 'Purificación y embotellado de agua', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Enseñanza educativa preescolar, primaria y educación inicial', 'Escuelas del sector privado que combinan diversos niveles de educación', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Enseñanza a preescolar, primaria y secundaria', 'Escuelas del sector privado que combinan diversos niveles de educación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Enseñanza de idiomas', 'Escuelas de idiomas del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Enseñanza educativa secundaria y bachillerato', 'Escuelas del sector privado que combinan diversos niveles de educación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Estética', 'Salones y clínicas de belleza y peluquerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Estética e instituto de belleza', 'Salones y clínicas de belleza y peluquerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Estética unisex', 'Salones y clínicas de belleza y peluquerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Estudio de tatuajes', 'Salones y clínicas de belleza y peluquerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Estudio de tatuajes, regalos y novedades', 'Salones y clínicas de belleza y peluquerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Estudio fotográfico', 'Servicios de fotografía y videograbación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Expendio de pan', 'Comercio al por mayor de pan y pasteles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación y venta de hieloComercio al por mayor de bebidas no alcohólicas y hielo', '', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Farmacia ', 'Farmacias sin minisúper', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Farmacia alopática', 'Farmacias sin minisúper', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Farmacia con minisúper', 'Farmacias sin minisúper', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Farmacia homeopática ', 'Farmacias sin minisúper', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Farmacia y consultorio médico*', 'Farmacias sin minisúper', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Farmacia veterinaria', 'Comercio al por mayor de medicamentos veterinarios y alimentos para animales, excepto mascotas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Farmacia y perfumería', 'Farmacias sin minisúpe', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Farmacia y compra-venta de artículos médicos', 'Farmacias sin minisúpe', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Farmacia, perfumería y regalos', 'Farmacias sin minisúpe', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Ferretería', 'Comercio al por menor en ferreterías y tlapalerías', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Ferretería con venta de pinturas y solventes', 'Comercio al por menor en ferreterías y tlapalerías', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Ferretería y tlapalería ', 'Comercio al por menor en ferreterías y tlapalerías', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Ferretería, tlapalería y material eléctrico', 'Comercio al por menor en ferreterías y tlapalerías', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Financiera', 'Corporativos', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Flores artificiales y follajes', 'Comercio al por menor de plantas y flores naturales', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fonda sin venta de bebidas alcohólicas', 'Restaurantes con servicio de preparación de alimentos a la carta o de comida corrida', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fotografía', 'Servicios de fotografía y videograbación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Frutas de temporada', 'Comercio al por menor de frutas y verduras frescas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Frutería y abarrotes sin venta de bebidas alcohólicas ', 'Comercio al por menor de frutas y verduras frescas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fuente de sodas sin venta de bebidas alcohólicas', 'Cafeterías, fuentes de sodas, neverías, refresquerías y similares', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fuente de sodas, helados y paletas', 'Cafeterías, fuentes de sodas, neverías, refresquerías y similares', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Funeraria', 'Servicios funerarios', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Helados, dulces y botanas a granel', 'Comercio al por menor de dulces y materias primas para repostería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Helados, refrescos y palomitas', 'Elaboración de helados y paletas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Herrería', 'Otros servicios relacionados con los servicios inmobiliarios', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Hules automotrices', 'Fabricación de hules sintéticos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Instalación de cristales y otras reparaciones a la carrocería de automóviles y camiones', 'Hojalatería, tapicería y otras reparaciones a la carrocería de automóviles y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Jarcería', 'Fabricación de escobas, cepillos y similares', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Joyería de metales y piedras no preciosos, y de otros materiales', 'Joyería de metales y piedras no preciosos, y de otros materiales', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Joyería y relojería', 'Comercio al por menor de artículos de joyería y relojes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Juguetería', 'Comercio al por menor de juguetes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Juguetería y regalos', 'Comercio al por menor de juguetes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Laboratorio de análisis clínicos*', 'Laboratorios de pruebas', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Lavandería', 'Lavanderías y tintorerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Lavandería y tintorería', 'Lavanderías y tintorerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Librería y artículos religiosos', 'Comercio al por mayor de libros', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Línea blanca, electrodomésticos y muebles en general', 'Comercio al por menor de muebles para el hogar', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Llantas, cámaras, aceites y acumuladores', 'Comercio al por menor de llantas y cámaras para automóviles, camionetas y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Lonchería sin venta de bebidas alcohólicas', 'Elaboración de alimentos frescos para consumo inmediato', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Lubricantes, acumuladores y accesorios automotrices', 'Comercio al por menor de aceites y grasas lubricantes, aditivos y similares para vehículos de motor', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Maderería', ' Fabricación de productos de madera de uso industrial', 'Prodctos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Maderería y triplay', ' Fabricación de productos de madera de uso industrial', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Mantenimiento y colocación de parabrisas', ' Instalación de cristales y otras reparaciones a la carrocería de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Máquinas de coser industrial y refacciones en general', 'Comercio al por mayor de otros productos textiles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Máquinas de videojuegos', 'Otros servicios personales', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Material eléctrico, ferretería y tlapalería', 'Comercio al por menor en ferreterías y tlapalerías', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Material fotográfico y accesorios', 'Servicios de fotografía y videograbación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Materiales para construcción, ferretería y tlapalería', 'Comercio al por mayor de otros materiales para la construcción, excepto de madera y metálicos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Materias primas', 'Comercio al por menor de dulces y materias primas para repostería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Materias primas, artículos de fantasía para fiestas', 'Comercio al por menor de dulces y materias primas para repostería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Materias primas, plásticos y artículos de temporada', 'Comercio al por menor de dulces y materias primas para repostería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Mensajería y paquetería nacional y foránea', 'Comercio al por menor de dulces y materias primas para repostería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Mercería', 'Comercio al por menor de artículos de mercería y bonetería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Mercería y novedades', 'Comercio al por menor de artículos de mercería y bonetería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Mercería y regalos', 'Comercio al por menor de artículos de mercería y bonetería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Mercería, bonetería y arrendadora', 'Comercio al por menor de artículos de mercería y bonetería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Mercería, papelería y materiales para confección de juguetes', 'Comercio al por menor de artículos de mercería y bonetería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Mercería, papelería y regalos', 'Comercio al por menor de artículos de mercería y bonetería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Miscelánea sin venta de bebidas alcohólicas', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Miscelánea y recaudería sin venta de bebidas alcohólicas', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Miscelánea y semillas sin venta de bebidas alcohólicas', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Miscelánea y vulcanizadora sin venta de bebidas alcohólicas', 'Reparación menor de llantas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Miscelánea sin venta de bebidas alcohólicas', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Miscelánea y carnes frías sin venta de bebidas alcohólicas', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Miscelánea y recaudería sin venta de bebidas alcohólicas', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Molino de chiles', 'Elaboración de tortillas de maíz y molienda de nixtamal', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Molino de nixtamal, chiles y especias', 'Elaboración de tortillas de maíz y molienda de nixtamal', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Molino y tortillería', 'Elaboración de tortillas de maíz y molienda de nixtamal', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Molinos', 'Elaboración de tortillas de maíz y molienda de nixtamal', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Motosierras, ferretería y tlapalería', 'Comercio al por menor en ferreterías y tlapalerías', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Mueblería', 'Comercio al por menor de muebles para el hogar', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Muebles para baño', 'Comercio al por menor de muebles para el hogar', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Novedades, regalos y artículos de temporada', 'Comercio al por menor de regalos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Óptica', 'Consultorios de optometría', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Óptica y consultorio oftalmológico', 'Consultorios de optometría', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Orfebrería y joyería de metales y piedras preciosos', 'Comercio al por mayor de artículos de joyería y relojes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Otras reparaciones mecánicas de automóviles y camiones', 'Reparación mecánica en general de automóviles y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Otros servicios de limpieza', 'Servicios de limpieza', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Otros servicios educativos proporcionados por el sector privado', 'Otros servicios educativos', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Otros servicios personales', 'Otros servicios personales', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Otros servicios relacionados con el transporte', 'Servicios relacionados con el transporte por carretera', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Pañales desechables y comestibles infantiles', 'Comercio al por menor de pañales desechables', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Papelería', 'Comercio al por menor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Papelería, fotografía y regalos', 'Comercio al por menor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Papelería, mercería y regalos', 'Comercio al por menor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Papelería y artículos de oficina', 'Comercio al por menor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Papelería y artículos escolares', 'Comercio al por menor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Papelería y cajas de cartón', 'Comercio al por menor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Papelería y pastelería', 'Comercio al por menor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Papelería y regalos ', 'Comercio al por menor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Papelería, artículos de escritorio y regalos', 'Comercio al por menor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Papelería, artículos de oficina y dibujo', 'Comercio al por menor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Papelería, clases particulares y de regularización', 'Comercio al por menor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Papelería, mercería y librería', 'Comercio al por menor de artículos de papelería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Pastelería y repostería', 'Comercio al por mayor de pan y pasteles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Peluquería', 'Otros servicios personales', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Perfumería', 'Comercio al por menor de artículos de perfumería y cosméticos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Perfumería y abarrotes', 'Comercio al por menor de artículos de perfumería y cosméticos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Perfumería y artículos de belleza', 'Comercio al por menor de artículos de perfumería y cosméticos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Perfumería y artículos de limpieza', 'Comercio al por menor de artículos de perfumería y cosméticos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Perfumería y regalos', 'Comercio al por menor de artículos de perfumería y cosméticos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Pinturas en general', 'Comercio al por menor de pintura', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Pisos y azulejos para baño', 'Comercio al por menor de pisos y recubrimientos cerámicos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Pizzería', 'Restaurantes con servicio de preparación de pizzas, hamburguesas, hot dogs y pollos rostizados para llevar', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Pollería', 'Comercio al por menor de carne de aves', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Pollería, recaudería y miscelánea sin venta de bebidas alcohólicas', 'Comercio al por menor de carne de aves', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Pollos asados al carbón sin venta de bebidas alcohólicas', 'Restaurantes con servicio de preparación de pizzas, hamburguesas, hot dogs y pollos rostizados para llevar', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Producción de otros alimentos frescos sin venta de bebidas alcohólicas', 'Elaboración de alimentos frescos para consumo inmediato', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Producción de tortillas de maíz', 'Elaboración de tortillas de maíz y molienda de nixtamal', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Producción y comercialización de quesos y derivados', 'Comercio al por menor de leche, otros productos lácteos y embutidos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Producción y comercialización de quesos y productos lácteos', 'Comercio al por menor de leche, otros productos lácteos y embutidos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Productos de limpieza a granel', 'Comercio al por menor de artículos para la limpieza', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Productos veterinarios, alimentos y accesorios', 'Comercio al por mayor de medicamentos veterinarios y alimentos para animales, excepto mascotas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Publicidad y globos', 'Agencias de publicidad', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Purificación y embotellado de agua', 'Purificación y embotellado de agua', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Quesería', 'Comercio al por menor de leche, otros productos lácteos y embutidos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Recaudería y pollería', 'Explotación de pollos para la producción de carne', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Recaudería y venta de pollo destazado', 'Explotación de pollos para la producción de carne', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Recubrimientos para baños, cocinas y accesorios', 'Comercio al por menor de pisos y recubrimientos cerámicos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Refaccionaria y accesorios automotriz', 'Comercio al por menor de partes y refacciones nuevas para automóviles, camionetas y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Refacciones automotrices y lubricantes', 'Comercio al por menor de partes y refacciones nuevas para automóviles, camionetas y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Refacciones, accesorios, compra - venta de bicicletas', 'Comercio al por menor de bicicletas y triciclos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Regalos y novedades', 'Comercio al por menor de regalos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Regalos, novedades y videojuegos', 'Comercio al por menor de regalos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Renta de computadoras y papelería', 'Alquiler de equipo de cómputo y de otras máquinas y mobiliario de oficina', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Renta de equipo de cómputo', 'Alquiler de equipo de cómputo y de otras máquinas y mobiliario de oficina', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Renta de videogramas', 'Alquiler de otros artículos para el hogar y personales', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Renta y venta de computadoras', 'Alquiler de equipo de cómputo y de otras máquinas y mobiliario de oficina', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reparación de calzado', 'Reparación de calzado y otros artículos de piel y cuero', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reparación de calzado y otros artículos de piel y cuero', 'Reparación de calzado y otros artículos de piel y cuero', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reparación de maquinaria y equipo industrial', 'Reparación y mantenimiento de maquinaria y equipo industrial', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reparación de relojes y joyas', 'Orfebrería y joyería de metales y piedras preciosos', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reparación de suspensiones de automóviles y camiones', 'Reparación mecánica en general de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reparación de tapicería de muebles para el hogar', 'Reparación de tapicería de muebles para el hogar', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reparación de transmisiones de automóviles y camiones', 'Reparación mecánica en general de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reparación del sistema eléctrico de automóviles y camiones', 'Reparación del sistema eléctrico de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reparación mecánica en general de automóviles y camiones', 'Reparación del sistema eléctrico de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reparación menor de llantas', 'Reparación menor de llantas', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reparación y mantenimiento de bicicletas', 'Reparación y mantenimiento de bicicletas', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reparación y mantenimiento de electrodomésticos', 'Reparación y mantenimiento de equipo electrónico de uso doméstico', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reparación y venta de refrigeradores', 'Reparación y mantenimiento de equipo electrónico de uso doméstico', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reparaciones eléctricas (vehículos)', 'Reparación del sistema eléctrico de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Restaurante de comida china sin venta de bebidas alcohólicas', 'Restaurantes con servicio de preparación de alimentos a la carta o de comida corrida', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Restaurante de comida para llevar sin venta de bebidas alcohólicas', 'Restaurantes que preparan otro tipo de alimentos para llevar', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Restaurante sin venta de bebidas alcohólicas', 'Restaurantes con servicio de preparación de alimentos a la carta o de comida corrida', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Restaurantes de tacos y tortas', 'Restaurantes con servicio de preparación de tacos y tortas', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Ropa en general y accesorios', 'Comercio al por menor de ropa, excepto de bebé y lencería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Ropa en general y blancos', 'Comercio al por menor de ropa, excepto de bebé y lencería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Ropa y accesorios para dama', 'Comercio al por menor de ropa, excepto de bebé y lencería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Ropa infantil, juvenil y accesorios', 'Confección de prendas de vestir', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Ropa para bebé en general', 'Comercio al por menor de ropa de bebé', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Ropa y artículos para eventos especiales', 'Comercio al por menor de ropa, excepto de bebé y lencería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Ropa y novedades', 'Confección de prendas de vestir', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Ropa y regalos', 'Comercio al por menor de ropa, excepto de bebé y lencería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Rosticería', 'Restaurantes con servicio de preparación de pizzas, hamburguesas, hot dogs y pollos rostizados para llevar', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Rosticería con comedor', 'Restaurantes con servicio de preparación de pizzas, hamburguesas, hot dogs y pollos rostizados para llevar', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Sala de embalsamiento', 'Servicios funerarios', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Salchichería', 'Comercio al por menor de leche, otros productos lácteos y embutidos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Salón, clínicas de belleza y peluquerías', ' Salones y clínicas de belleza y peluquerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Salón de belleza', 'Salones y clínicas de belleza y peluquerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Salones de belleza, peluquerías y estéticas. ', 'Salones y clínicas de belleza y peluquerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Salones y clínicas de belleza y peluquerías', 'Salones y clínicas de belleza y peluquerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Sanitarios públicos', 'Sanitarios públicos y bolerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Sanitarios públicos y bolerías', 'Sanitarios públicos y bolerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Semillas, forrajes, fertilizantes y derivados', 'Comercio al por menor de semillas y granos alimenticios, especias y chiles secos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicios de educación', 'Escuelas del sector privado que combinan diversos niveles de educación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicio de estudios fotográficos', 'Servicios de fotografía y videograbación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicio de fotocopiado', 'Servicios de fotocopiado, fax y afines', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicio de fotocopiado, fax y afines', 'Servicios de fotocopiado, fax y afines', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicio de lavandería', 'Lavanderías y tintorerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicios de gastronomía', 'Servicios de preparación de alimentos para ocasiones especiales', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicio de revelado de fotografías', 'Servicios de revelado e impresión de fotografías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicio radiotécnico', 'Otros servicios de grabación del sonido', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicios financieros', 'Corporativos', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicios funerarios', 'Servicios funerarios', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicios técnicos de imagen, cosmetología y estilismos', 'Salones y clínicas de belleza y peluquerías', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicios veterinarios para la ganadería prestados por el sector privado*', 'Servicios veterinarios para la ganadería prestados por el sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicios veterinarios para mascotas por el sector privado*', 'Servicios veterinarios para la ganadería prestados por el sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Sex Shop', 'Comercio al por menor de otros artículos de uso personal', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Siembra de cultivo, servicios de maquila de maíz y comercialización', 'Comercio al por mayor de fertilizantes, plaguicidas y semillas para siembra', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Sociedades financieras de objetos múltiples', 'Otros servicios profesionales, científicos y técnicos', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Suplementos alimenticios', 'Comercio al por menor de productos naturistas, medicamentos homeopáticos y de complementos alimenticios', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Taller de cerrajería', 'Cerrajerías', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Taller de joyería y relojería con venta de pedacería', 'Orfebrería y joyería de metales y piedras preciosos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Taller de rectificación', 'Reparación de transmisiones de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Taller de reparación de motores eléctricos', 'Reparación del sistema eléctrico de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Taller de soldadura en general', 'Reparación y mantenimiento de maquinaria y equipo industrial', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Taller de torno', 'Reparación y mantenimiento de maquinaria y equipo industrial', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Taller electromecánico', 'Reparación del sistema eléctrico de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Taller eléctrico y mecánico', 'Reparación del sistema eléctrico de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Taller mecánico automotriz', 'Reparación del sistema eléctrico de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Taller mecánico automotriz, lubricantes y refacciones', 'Reparación del sistema eléctrico de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Taller óptico', 'Consultorios de optometría', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tapicería de automóviles y camiones', 'Tapicería de automóviles y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Taquería sin venta de bebidas alcohólicas', 'Restaurantes con servicio de preparación de tacos y tortas', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tienda de pinturas en general', 'Comercio al por menor de pintura', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tienda departamental', 'Comercio al por menor en tiendas departamentales', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tienda naturista', 'Comercio al por menor de productos naturistas, medicamentos homeopáticos y de complementos alimenticios', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tienda naturista y orientación médica', 'Comercio al por menor de productos naturistas, medicamentos homeopáticos y de complementos alimenticios', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tlapalería, ferretería y materias primas para construcción', 'Comercio al por menor en ferreterías y tlapalerías', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tornillería', 'Comercio al por menor en ferreterías y tlapalerías', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tortas y licuados sin venta de bebidas alcohólicas', 'Restaurantes con servicio de preparación de tacos y tortas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tortería', 'Restaurantes con servicio de preparación de tacos y tortas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tortería, antojitos mexicanos y frituras sin venta de bebidas alcohólicas', 'Restaurantes con servicio de preparación de tacos y tortas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de billetes de lotería, pronósticos deportivos y otros boletos de sorteo', 'Venta de billetes de lotería, pronósticos deportivos y otros boletos de sorteo', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de bisutería y artículos de novedad', 'Comercio al por mayor de ropa, bisutería y accesorios de vestir', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de bolsas y rollos de plástico', 'Comercio al por mayor de desechos de plástico', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de cajas y diseños', 'Comercio al por mayor de artículos y accesorios para diseño y pintura artística', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de calzado', 'Comercio al por menor de calzado', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de calzado, ropa y accesorios por catálogo', 'Comercio al por menor de calzado', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de carbón y leña', 'Comercio al por menor de otros combustibles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de carne', 'Comercio al por menor de carnes rojas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de chicharrón', 'Comercio al por menor de carnes rojas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de comida china', 'Restaurantes con servicio de preparación de alimentos a la carta o de comida corrida', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de comida corrida', 'Restaurantes con servicio de preparación de alimentos a la carta o de comida corrida', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de comida japonesa sin venta de bebidas alcohólicas', 'Restaurantes con servicio de preparación de alimentos a la carta o de comida corrida', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de comida y antojitos en general sin venta de bebidas alcohólicas', 'Restaurantes con servicio de preparación de alimentos a la carta o de comida corrida', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de ensaladas', 'Elaboración de alimentos frescos para consumo inmediato', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de jugos, licuados, cocteles y frutas de temporada', 'Elaboración de alimentos frescos para consumo inmediato', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de lencería', 'Comercio al por menor de lencería', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de libros', 'Comercio al por menor de libros', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de materia prima', 'Comercio al por mayor de otras materias primas para otras industrias', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de material eléctrico', 'Comercio al por mayor de equipo y material eléctrico', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de muebles de madera', 'Comercio al por menor de muebles para el hogar', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de pan', 'Comercio al por mayor de pan y pasteles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de pasteles y café', 'Comercio al por mayor de pan y pasteles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de semillas', 'Comercio al por mayor de semillas y granos alimenticios, especias y chiles secos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta y reparación de auxiliares auditivos', 'Reparación y mantenimiento de otro equipo electrónico y de equipo de precisión', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de telefonía celular y accesorios', 'Comercio al por mayor de equipo de telecomunicaciones, fotografía y cinematografía', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Video-juegos', 'Casas de juegos electrónicos', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Vulcanizadora', 'Reparación menor de llantas', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Zapatería', 'Comercio al por menor de calzado', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Zapatería y artículos de piel', 'Comercio al por menor de calzado', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Zapatería y bonetería', 'Comercio al por menor de calzado', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Zapatería y derivados', 'Comercio al por menor de calzado', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Zapatería y regalos', 'Comercio al por menor de calzado', 'Productos');
+
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Academia de belleza', 'Escuelas de educación media técnica terminal del sector privado', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Arrendamiento de locales comerciales y estacionamiento', 'Alquiler sin intermediación de oficinas y locales comerciales', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Autolavado y estacionamiento', 'Lavado y lubricado de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Banco', 'Corporativos', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Banco y actividades financieras', 'Corporativos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Capilla de velación', 'Servicios funerarios', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Casa de empeño', 'Casas de empeño', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Casa de préstamo y empeño', 'Casas de empeño', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Centro cambiario', 'Casas de cambio', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Consumibles de cómputo', 'Comercio al por menor de mobiliario, equipo y accesorios de cómputo', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de mascotas, medicamentos, accesorios y otros productos', 'Comercio al por menor de mascotas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio al por menor de pasteles', 'Comercio al por mayor de pan y pasteles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Comercio de madera aserrada y producción de envases, tarimas y contenedores de madera', 'Comercio al por mayor de madera para la construcción y la industria', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de mascotas, accesorios y alimento', 'Comercio al por menor de mascotas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de autos y camiones nuevos y usados', 'Comercio al por menor de automóviles y camionetas nuevos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta de autos y camiones nuevos y usados, refacciones y servicio de importación y exportación', 'Comercio al por menor de partes y refacciones nuevas para automóviles, camionetas y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta distribución de automóviles nuevos refacciones y servicio', 'Comercio al por mayor de partes y refacciones nuevas paraautomóviles, camionetas y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Compra - venta, alquiler y consignación de automóviles', 'Comercio al por mayor de partes y refacciones nuevas para automóviles, camionetas y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Consulta médica-quirúrgica*', 'Consultorios de medicina general del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Desperdicios industriales, leña, maderas y cimbra', 'Manejo de desechos no peligrosos y servicios de remediación a zonas dañadas por desechos no peligrosos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Distribución y comercialización de tela y ropa', 'Fabricación de telas de tejido de punto', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Distribuidora de bebidas embotelladas sin venta de alcohol', 'Comercio al por menor de bebidas no alcohólicas y hielo', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Distribuidora de carne', 'Comercio al por menor de carnes rojas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Distribuidora de ropa interior y exterior, lencería y corsetería', 'Fabricación de ropa interior de tejido de punto', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Educación de estudios superiores', 'Escuelas de educación superior del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Educación inicial, preescolar, primaria, secundaria y bachillerato general escolarizado', 'Escuelas del sector privado que combinan diversos niveles de educación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración de pasteles y banquetes', 'Comercio al por mayor de pan y pasteles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración de productos de celulosa, papel y productos higiénicos', 'Fabricación de bolsas de papel y productos celulósicos recubiertos y tratados', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Elaboración, venta de pan y abarrotes sin venta de bebidas alcohólicas', 'Comercio al por mayor de pan y pasteles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Enseñanza de educación inicial, preescolar y primaria', 'Escuelas del sector privado que combinan diverso niveles de educación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Envasado de todo tipo de bebidas incluso alcohólicas', 'Comercio al por menor de bebidas y hielo', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuela', 'Escuelas del sector privado que combinan diversos niveles de educación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuela de cultura de belleza y bachiller tecnológico', 'Escuelas del sector privado que combinan diversos niveles de educación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuela de educación media y media superior', 'Escuelas del sector privado que combinan diversos niveles de educación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuela de educación preescolar e inicial perteneciente al sector privado', 'Escuelas del sector privado que combinan diversos niveles de educación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuela de educación preescolar y primaria', 'Escuelas del sector privado que combinan diversos niveles de educación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuela de enfermería', 'Escuelas de educación superior del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuela de estudios de nivel medio superior', 'Escuelas de educación media superior del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuela de idiomas', 'Escuelas de idiomas del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuela de natación', 'Escuelas de deporte del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuela de educación superior', 'Escuelas de educación superior del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuela mecánica automotriz', 'Escuelas de educación superior del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuela de computación', 'Escuelas de computación', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuelas de deportes', 'Escuelas de deporte del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuela de educación para necesidades especiales', 'Escuelas del sector privado de educación para necesidades especiales', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuelas dedicadas a la enseñanza de oficios', 'Escuelas del sector privado dedicadas a la enseñanza de oficios', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Escuelas de ejecutivos del sector privado', 'Escuelas para la capacitación de ejecutivos del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Estacionamiento público', 'Estacionamientos y pensiones para vehículos automotores', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Estacionamiento público y pensión de autos', 'Estacionamientos y pensiones para vehículos automotores', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Estacionamiento y sanitarios públicos', 'Estacionamientos y pensiones para vehículos automotores', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Estacionamiento, pensión y auto lavado', 'Estacionamientos y pensiones para vehículos automotores', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Exhibición de películas y otros materiales audiovisuales', 'Exhibición de películas y otros materiales audiovisuales', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de alfombras y tapetes', 'Fabricación de alfombras y tapetes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de básculas y balanzas', 'Fabricación de aparatos e instrumentos para pesar', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de artículos deportivos', 'Fabricación de artículos deportivos', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de artículos y utensilios de madera para el hogar', 'Fabricación de artículos y utensilios de madera para el hogar', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de asientos y accesorios interiores para vehículos automotores', 'Fabricación de asientos y accesorios interiores para vehículos automotores', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de ataúdes', 'Fabricación de ataúdes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de banderas y otros productos textiles no clasificados en otra parte', 'Confección, bordado y deshilado de productos textiles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de bolsas y envolturas de polietileno', 'Comercio al por mayor de desechos de plástico', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de calcetines y medias de tejido de punto', 'Fabricación de calcetines y medias de tejido de punto', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de calzado con corte de tela', 'Fabricación de calzado con corte de tela', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de escobas, cepillos y similares', 'Fabricación de escobas, cepillos y similares', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de instrumentos musicales', 'Fabricación de instrumentos musicales', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de juguetes', 'Fabricación de juguetes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de ropa exterior de tejido de punto', 'Fabricación de ropa exterior de tejido de punto', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Gimnasio', 'Clubes deportivos y centros de acondicionamiento físico', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Guarderías', 'Guarderías del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Hojalatería y pintura automotriz', ' Hojalatería y pintura de automóviles y camiones', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Hotel en general sin venta de bebidas alcohólicas', 'Hoteles con otros servicios integrados', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Hotel sin venta de bebidas alcohólicas', 'Hoteles con otros servicios integrados', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Hotel y lavandería sin venta de bebidas alcohólicas', 'Hoteles con otros servicios integrados', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Hotel y motel sin venta de bebidasalcohólicas', 'Hoteles con otros servicios integrados', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Hotel y sanitarios públicos sin venta de bebidas alcohólicas ', 'Hoteles con otros servicios integrados', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Hotel, restaurante sin venta de bebidas alcohólicas ', 'Hoteles con otros servicios integrados', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Hotel, restaurante, salón social, estacionamiento sin venta de bebidas alcohólicas', 'Hoteles con otros servicios integrados', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Imprenta', 'Edición de otros materiales integrada con la impresión', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Panadería y expendio de pan', 'Panificación tradicional', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Panadería y regalos', 'Panificación tradicional', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Panadería y repostería', 'Panificación tradicional', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Panificación tradicional', 'Panificación tradicional', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Panificadora y canapés', 'Panificación tradicional', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Pastelería y repostería', 'Comercio al por mayor de pan y pasteles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Pastelería y cafetería', 'Comercio al por mayor de pan y pasteles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Pastelería y paletería', 'Comercio al por mayor de pan y pasteles', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reciclado y elaboración de bolsas y rollos de polietileno', 'Comercio al por mayor de desechos de plástico', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Recicladora de cartón, chatarra, madera, plástico entre otros', 'Comercio al por mayor de desechos de papel y de cartón', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Recicladora en general', 'Fabricación de productos textiles reciclados', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Reciclados industriales', 'Comercio al por mayor de otros materiales de desecho', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Salón de eventos infantiles sin expedición de alcohol', 'Alquiler sin intermediación de salones para fiestas y convenciones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Salón social', 'Alquiler sin intermediación de salones para fiestas y convenciones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Salón social sin venta de bebidas alcohólicas', 'Alquiler sin intermediación de salones para fiestas y convenciones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Sanatorio*', 'Clínicas de consultorios médicos del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Sanatorio y escuela de enfermería*', 'Clínicas de consultorios médicos del sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicios de esparcimiento cultural', 'Promotores del sector privado de espectáculos artísticos, culturales, deportivos y similares que cuentan con instalaciones para presentarlos', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicio eléctrico automotriz', 'Reparación del sistema eléctrico de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Servicio mecánico automotriz', 'Reparación mecánica en general de automóviles y camiones', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tienda de mascotas', 'Comercio al por menor de mascotas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Veterinaria*', 'Servicios veterinarios para mascotas prestados por el sector privado', 'Servicios');
+
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Centro de acopio (compra - venta de cartón, plástico y aluminio)', 'Comercio al por mayor de desechos de papel y de cartón', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Centro de acopio, recicladora y disposición final', 'Comercio al por mayor de desechos de papel y de cartón', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Diagnósticos médicos*', 'Diagnósticos médicos', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Estación de carburación de gas L.P.', 'Comercio al por mayor de combustibles de uso industrial', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Estación de servicio de combustible (gasolinera)', 'Comercio al por mayor de combustibles de uso industrial', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Estudios de radiología, ultrasonidos y análisis en general*', 'Consultorios de medicina especializada del sector privado', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Fabricación de productos químicos básicos', 'Fabricación de petroquímicos básicos del gas natural y del petróleo refinado', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Funeraria y agencia de inhumación', 'Administración de cementerios pertenecientes al sector privado', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Gases industriales y ferretería', 'Comercio al por mayor de combustibles de uso industrial', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Gasolinera, diésel y lubricantes', 'Comercio al por mayor de combustibles de uso industrial', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de gas en cilindro', 'Comercio al por mayor de combustibles de uso industrial', 'Productos');
+
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Abarrotes con venta de bebidas alcohólicas en botella cerrada ', 'Comercio al por mayor de abarrotes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Abarrotes con venta de vinos, licores y cerveza en botella cerrada ', 'Comercio al por mayor de abarrotes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Abarrotes en general con venta de bebidas alcohólicas en botella cerrada', 'Comercio al por mayor de abarrotes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Abarrotes en general con venta de cerveza en botella cerrada ', 'Comercio al por mayor de abarrotes', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Antojitos mexicanos con vinos y licores al copeo con alimentos', 'Restaurantes con servicio de preparación de alimentos a la carta o de comida corrida', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Baños públicos con venta de cerveza y gimnasio', 'Baños públicos', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Bar', 'Bares, cantinas y similares', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Bar (música en vivo) con venta de bebidas alcohólicas en botella abierta', 'Bares, cantinas y similares', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Billar con venta de bebidas alcohólicas', 'Bares, cantinas y similares', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Botanero con venta de bebidas alcohólicas', 'Bares, cantinas y similares', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cabaret y centro nocturno', 'Centros nocturnos, discotecas y similares', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cantina al copeo y en botella abierta', 'Bares, cantinas y similares', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cantina sin música en vivo', 'Bares, cantinas y similares', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cervecería', 'Bares, cantinas y similares', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Cocina económica con venta de cerveza', 'Restaurantes con servicio de preparación de alimentos a la carta o de comida corrida', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Discoteca', 'Centros nocturnos, discotecas y similares', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Expendio de mezcal y aguardiente en botella cerrada y a granel', 'Elaboración de bebidas destiladas de agave', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Farmacia y tienda de autoservicio con venta de bebidas alcohólicas en botella cerrada', 'Farmacias con minisúper', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Hotel, motel, auto hotel con servicio de restaurante bar con ventas de bebidas alcohólicas y cerveza', 'Hoteles con otros servicios integrados', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Marisquería con venta de bebidas alcohólicas', 'Restaurantes con servicio de preparación de alimentos a la carta o de comida corrida', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Miscelánea con venta de cerveza en botella cerrada', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');	
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Miscelánea y carnes frías con venta de cerveza en botella cerrada', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Miscelánea, recaudería con venta de bebidas alcohólicas en botella cerrada', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Motel con venta de bebidas alcohólicas', 'Moteles', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Pizzería con venta de bebidas alcohólicas', 'Restaurantes con servicio de preparación de pizzas, hamburguesas, hot dogs y pollos rostizados para llevar', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Pulquería', 'Elaboración de otras bebidas destiladas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Restaurante bar', 'Restaurantes con servicio de preparación de alimentos a la carta o de comida corrida', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Restaurante con venta de bebidas alcohólicas exclusivamente con alimentos', 'Restaurantes con servicio de preparación de alimentos a la carta o de comida corrida', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Taquería con venta de cerveza en alimentos', 'Restaurantes con servicio de preparación de tacos y tortas', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tendejón con venta de bebidas alcohólicas en botella cerrada', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tendejón con venta de cerveza en botella cerrada', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tienda de abarrotes con venta de bebidas alcohólicas en botella cerrada', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tienda de autoservicio con venta de vinos y licores en botella cerrada', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tienda de autoservicio (supermercado)', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tienda de autoservicio 24 horas', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tienda de autoservicio con apertura de 24 horas con venta de alcohol', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Tienda departamental con venta de bebidas alcohólicas en botella cerrada', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Ultramarinos con venta de bebidas alcohólicas en botella cerrada', 'Comercio al por menor en tiendas de abarrotes, ultramarinos y misceláneas', 'Productos');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Venta de pollos a la leña, refrescos y cerveza exclusivamente con alimentos', 'Restaurantes con servicio de preparación de pizzas, hamburguesas, hot dogs y pollos rostizados para llevar', 'Servicios');
+INSERT INTO giro(n_giro, d_giro, c_giro) VALUES('Vinatería con venta de abarrotes', 'Comercio al por mayor de vinos y licores', 'Productos');
+
+# INICIO DE PROCEDIMIENTOS ALMCAENADOS
+
+# PROCEDIMIENTO ALMACENADO PARA INSERTAR EL idusuario EN LA TABLA datos_personales
+
+DELIMITER //
+CREATE PROCEDURE insertIdusuario()
+BEGIN
+DECLARE id_U INT;
+SET id_U = (SELECT idusuario FROM usuarios ORDER BY idusuario DESC LIMIT 1);
+INSERT INTO datos_personales(idusuario) VALUES(id_U);
+END //
+
+DELIMITER //
+CREATE TRIGGER insertIdusuarioTrigger AFTER INSERT ON usuarios
+FOR EACH ROW
+CALL insertIdusuario();
+END //
+
+# PROCEDIMIENTO ALMACENADO PARA INSERTAR EL idpesonal EN LA TABLA info_negocio
+
+DELIMITER //
+CREATE PROCEDURE insertIdpersonal()
+BEGIN
+DECLARE id_P INT;
+SET id_P = (SELECT idpersonal FROM datos_personales ORDER BY idpersonal DESC LIMIT 1);
+INSERT INTO info_negocio(idpersonal) VALUES(id_P);
+END //
+
+DELIMITER //
+CREATE TRIGGER insertIdpersonalTrigger AFTER INSERT ON datos_personales
+FOR EACH ROW
+CALL insertIdpersonal();
+END //
+
+# PROCEDIMIENTO ALMACENADO PARA INSERTAR EL idinfo_negocio EN LA TABLA direccion Y EN redes_sociales
+
+DELIMITER //
+CREATE PROCEDURE insertIdinfonegocio()
+BEGIN
+DECLARE id_P INT;
+SET id_P = (SELECT idinfo_negocio FROM info_negocio ORDER BY idinfo_negocio DESC LIMIT 1);
+INSERT INTO direccion(idinfo_negocio) VALUES(id_P);
+INSERT INTO redes_sociales(idinfo_negocio) VALUES(id_P);
+INSERT INTO dias_horario(idinfo_negocio) VALUES(id_P);
+END //
+
+DELIMITER //
+CREATE TRIGGER insertIdinfonegocioTrigger AFTER INSERT ON info_negocio
+FOR EACH ROW
+CALL insertIdinfonegocio();
+END //
+
+# FIN DE PROCEDIMIENTOS ALMACENADOS
+
+
