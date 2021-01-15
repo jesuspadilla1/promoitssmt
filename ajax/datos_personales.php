@@ -3,7 +3,6 @@ session_start();
 require_once "../modelos/Datos_Personales.php";
 
 $datos_personales = new Datos_Personales();
-$nueva =1;
 
 $idpersonal = isset($_POST["idpersonal"])? limpiarCadena($_POST["idpersonal"]):"";
 $nombres = isset($_POST["nombres"])? limpiarCadena($_POST["nombres"]):"";
